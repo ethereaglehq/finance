@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens. Dark is the default (StockWisp-style deep navy); light is a selected theme, not a flip. */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 14 17 22;          /* #0e1116 */
+  --surface: 21 26 33;     /* #151a21 */
+  --surface-2: 28 34 43;   /* #1c222b */
+  --line: 42 49 60;        /* #2a313c */
+  --ink: 242 244 247;
+  --muted: 161 170 184;    /* #a1aab8 */
+  --faint: 107 116 132;
+  --accent: 47 124 246;    /* #2f7cf6 */
+  --accent-fg: 255 255 255;
+  --pos: 59 178 115;       /* gains */
+  --neg: 239 91 83;        /* losses */
+  --warn: 227 163 59;
+  --info: 92 156 255;
+
+  /* chart roles (reference palette, dark steps) */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --chart-grid: #232a34;
+  --chart-axis: #7d8796;
+  --seq-0: #183153;
+  --seq-1: #3987e5;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: 245 246 248;
+  --surface: 255 255 255;
+  --surface-2: 241 243 246;
+  --line: 226 230 236;
+  --ink: 15 23 42;
+  --muted: 85 96 112;
+  --faint: 138 148 163;
+  --accent: 37 99 235;
+  --accent-fg: 255 255 255;
+  --pos: 21 128 61;
+  --neg: 220 38 38;
+  --warn: 180 83 9;
+  --info: 37 99 235;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --chart-grid: #e8ebf0;
+  --chart-axis: #6b7484;
+  --seq-0: #eef4fd;
+  --seq-1: #2a78d6;
+}
+
+html, body, #root { min-height: 100%; }
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  font-feature-settings: "cv11", "ss01", "tnum" 0;
+}
+.tnum { font-variant-numeric: tabular-nums; }
+::selection { background: rgb(var(--accent) / 0.35); }
+
+*:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 6px; }
+
+/* scrollbars */
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--line)) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 10px; border: 2px solid rgb(var(--bg)); }
+
+@layer components {
+  .card { @apply rounded-2xl border border-line/70 bg-surface shadow-card; }
+  .card-pad { @apply p-4 sm:p-5; }
+  .label { @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-faint; }
+  .input {
+    @apply w-full rounded-lg border border-line bg-surface2/60 px-3 py-2 text-sm text-ink placeholder:text-faint
+      outline-none transition focus:border-accent/70 focus:ring-2 focus:ring-accent/25 disabled:opacity-50;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition
+      disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap;
+  }
+  .btn-primary { @apply btn bg-accent text-accentfg hover:brightness-110 active:brightness-95; }
+  .btn-light { @apply btn bg-ink text-bg hover:opacity-90; }
+  .btn-ghost { @apply btn border border-line bg-surface2/60 text-ink hover:bg-surface2; }
+  .btn-quiet { @apply btn text-muted hover:text-ink hover:bg-surface2/70; }
+  .btn-danger { @apply btn bg-neg/90 text-white hover:bg-neg; }
+  .table-base { @apply w-full text-sm; }
+  .table-base th { @apply whitespace-nowrap border-b border-line/70 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-faint; }
+  .table-base td { @apply border-b border-line/40 px-3 py-2.5 align-middle; }
+  .table-base tbody tr { @apply transition-colors hover:bg-surface2/50; }
+  .skeleton { @apply rounded-md bg-surface2; background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.6), transparent); background-size: 400px 100%; animation: shimmer 1.4s linear infinite; }
+  .hero-glow { background: radial-gradient(60% 60% at 70% 0%, rgb(var(--accent) / 0.18), transparent 70%), radial-gradient(40% 50% at 10% 20%, rgb(var(--accent) / 0.08), transparent 70%); }
+  .grid-bg { background-image: linear-gradient(rgb(var(--line) / 0.25) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--line) / 0.25) 1px, transparent 1px); background-size: 48px 48px; }
+}
+
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+
+@media (forced-colors: active) {
+  .card { border: 1px solid CanvasText; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* recharts polish */
+.recharts-cartesian-grid line { stroke: var(--chart-grid); }
+.recharts-text { fill: var(--chart-axis); }
+.recharts-tooltip-cursor { stroke: rgb(var(--muted) / 0.5); }
+.recharts-wrapper:focus, .recharts-surface:focus { outline: none; }
